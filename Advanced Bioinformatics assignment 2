@@ -1,0 +1,20 @@
+
+# Creat a template named gatk.json
+{
+"rec":{
+            "chr": "<%= rec.chrom %>",
+            "pos": <%= rec.pos %>,
+            "ref": "<%= rec.ref %>",
+            "alt": "<%= rec.alt[0] %>",
+            "dp":  <%= rec.info.dp %>
+}
+}
+
+# Import into mongo
+mongoimport --db gatk --collection vcf --drop --file gatk_exome.json
+
+
+# Select entries wehre rec.pos is Between 2 values
+use gatk
+db.vcf.find({$and:[{"rec.pos":{$gt:134713855}},{"rec.pos":{$lt:134714855}}]})
+
