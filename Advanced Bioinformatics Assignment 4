@@ -1,0 +1,31 @@
+# Find which genes are differentially expressed in heart failure using R, 
+
+library(SPARQL)
+options <- NULL
+endpoint <- "https://www.ebi.ac.uk/rdf/services/uniprot/sparql"
+query <- "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX owl: <http://www.w3.org/2002/07/owl#>
+PREFIX dcterms: <http://purl.org/dc/terms/>
+  PREFIX obo: <http://purl.obolibrary.org/obo/>
+  PREFIX sio: <http://semanticscience.org/resource/>
+  PREFIX efo: <http://www.ebi.ac.uk/efo/>
+  PREFIX atlas: <http://rdf.ebi.ac.uk/resource/atlas/>
+  PREFIX atlasterms: <http://rdf.ebi.ac.uk/terms/atlas/>
+  PREFIX biopax3:<http://www.biopax.org/release/biopax-level3.owl#>
+PREFIX cco: <http://rdf.ebi.ac.uk/terms/chembl#>
+
+SELECT distinct ?dbXrefProt ?expressionValue ?propertyValue
+WHERE {
+  #Get differentially expressed genes (and proteins) where factor is heart failure
+  ?value atlasterms:pValue ?pvalue .
+  ?value atlasterms:hasFactorValue ?factor .
+  ?value rdfs:label ?expressionValue .
+  ?probe atlasterms:dbXref ?dbXrefProt .
+  ?dbXrefProt a atlasterms:UniprotDatabaseReference .
+  ?factor atlasterms:propertyType ?propertyType .
+  ?factor atlasterms:propertyValue ?propertyValue .
+  ?factor rdf:type efo:EFO_0003144 .
+} "
+
+SPARQL(endpoint,  query)$results
